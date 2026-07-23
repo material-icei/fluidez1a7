@@ -73,23 +73,46 @@ function mostrarPantalla(id) {
   document.getElementById(id).classList.add('screen--active');
 }
 
-/* ---------- pantalla menú ---------- */
-document.getElementById('card-actividad-1').addEventListener('click', () => {
-  mostrarPantalla('screen-config');
+/* ---------- pantalla menú: tarjetas de grado ---------- */
+let gradoSeleccionado = 1;
+
+document.querySelectorAll('.grade-card').forEach(card => {
+  card.addEventListener('click', () => {
+    gradoSeleccionado = Number(card.dataset.grade);
+    abrirConfigParaGrado(gradoSeleccionado);
+  });
 });
-document.getElementById('btn-config').addEventListener('click', () => {
+
+function abrirConfigParaGrado(grado) {
+  const sufijos = ['', 'º', 'º', 'º', 'º', 'º', 'º', 'º'];
+  const badge = document.getElementById('config-grade-badge');
+  badge.textContent = grado + 'º grado';
+
+  // color del badge según grado
+  const colores = ['','#FF6B5E','#FF9A3C','#C49A00','#4CAF7D','#2ABBA7','#2B7FB0','#7C5CBF'];
+  badge.style.background = colores[grado] || 'var(--tinta)';
+
+  // pre-completar el campo curso
+  document.getElementById('input-grade').value = grado + 'º grado';
+
+  // limpiar selección previa
+  lecturaSeleccionadaId = null;
+  document.getElementById('input-text').value = '';
+  actualizarPreviewPalabras();
+
+  renderBibliotecaFiltrada(grado);
   mostrarPantalla('screen-config');
-});
+}
 
 /* ---------- pantalla configuración ---------- */
-const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyAIKbLzNsrwu5P27K8cCd1MukBuvrj285ZnFdfiLFDC6vlp_DjKQYfG3F__U7xCUrzuw/exec';
+const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxvq95RdeFlheqXPFXZZWzklZEuoXh4xcTjbh40lPyH5F39uy2PBIFUSvJwkzvOQaXxnQ/exec';
 
 const LECTURAS_DEFAULT = [
-  { id: 'default-1', titulo: 'La gallina', texto: 'Las gallinas son aves. Las aves ponen huevos. Las crías se llaman pollitos. Sus cuerpos están cubiertos de plumas. Tienen pico, alas y dos patas. Las gallinas se alimentan de gusanos, insectos y semillas. Viven en un gallinero y tienen alas pero no vuelan.' },
-  { id: 'default-2', titulo: 'La máquina', texto: 'Mi abuelo es inventor. Cuando fui a visitarlo, me invitó a su laboratorio. Tiene una máquina con muchos botones. Es una fábrica de gomitas de colores. Apretamos un botón y salieron miles de gomitas. Las llevé a la escuela para compartir con mis amigos.' },
-  { id: 'default-3', titulo: 'Pedro, el conejo', texto: 'El conejo Pedro tiene ocho hermanos. Todos se preparan para ir a la escuela. Mamá les pone muchas zanahorias de merienda en la mochila. Pedro es muy distraído. Siempre se olvida su mochila en casa. Pero como tiene muchos hermanos, siempre alguno le convida zanahorias. Le encanta ir a la escuela y compartir con sus amigos. No falta nunca a clases.' },
-  { id: 'default-4', titulo: 'La vaca Victoria', texto: 'La vaca Victoria se va de paseo, moviendo la cola con suave meneo. A su lado salta su ternero nuevo. ¡Es tan divertido correr en invierno!' },
-  { id: 'default-5', titulo: 'Un teléfono inventado', texto: 'María y Luis son amigos. Les gusta jugar. Tienen una gran idea. Con dos vasos de plástico y un hilo de lana hacen un teléfono. María y Luis salieron felices a jugar con su nuevo invento.' },
+  { id: 'default-1', grado: 1, titulo: 'La gallina', texto: 'Las gallinas son aves. Las aves ponen huevos. Las crías se llaman pollitos. Sus cuerpos están cubiertos de plumas. Tienen pico, alas y dos patas. Las gallinas se alimentan de gusanos, insectos y semillas. Viven en un gallinero y tienen alas pero no vuelan.' },
+  { id: 'default-2', grado: 1, titulo: 'La máquina', texto: 'Mi abuelo es inventor. Cuando fui a visitarlo, me invitó a su laboratorio. Tiene una máquina con muchos botones. Es una fábrica de gomitas de colores. Apretamos un botón y salieron miles de gomitas. Las llevé a la escuela para compartir con mis amigos.' },
+  { id: 'default-3', grado: 1, titulo: 'Pedro, el conejo', texto: 'El conejo Pedro tiene ocho hermanos. Todos se preparan para ir a la escuela. Mamá les pone muchas zanahorias de merienda en la mochila. Pedro es muy distraído. Siempre se olvida su mochila en casa. Pero como tiene muchos hermanos, siempre alguno le convida zanahorias. Le encanta ir a la escuela y compartir con sus amigos. No falta nunca a clases.' },
+  { id: 'default-4', grado: 1, titulo: 'La vaca Victoria', texto: 'La vaca Victoria se va de paseo, moviendo la cola con suave meneo. A su lado salta su ternero nuevo. ¡Es tan divertido correr en invierno!' },
+  { id: 'default-5', grado: 1, titulo: 'Un teléfono inventado', texto: 'María y Luis son amigos. Les gusta jugar. Tienen una gran idea. Con dos vasos de plástico y un hilo de lana hacen un teléfono. María y Luis salieron felices a jugar con su nuevo invento.' },
 ];
 
 /* ---- biblioteca: fuente principal = Google Sheet, respaldo = defaults ---- */
@@ -110,19 +133,25 @@ async function cargarLecturasDesdeSheet() {
   } catch {
     lecturasCargadas = [...LECTURAS_DEFAULT];
   }
-  renderBiblioteca();
+  renderBibliotecaFiltrada(gradoSeleccionado);
 }
 
 function renderBiblioteca() {
+  renderBibliotecaFiltrada(gradoSeleccionado);
+}
+
+function renderBibliotecaFiltrada(grado) {
   const lista = document.getElementById('library-list');
   lista.innerHTML = '';
 
-  if (lecturasCargadas.length === 0) {
-    lista.innerHTML = '<span style="color:var(--tinta-suave);font-size:0.9rem">No hay lecturas cargadas en la planilla.</span>';
+  const filtradas = lecturasCargadas.filter(l => Number(l.grado) === Number(grado));
+
+  if (filtradas.length === 0) {
+    lista.innerHTML = '<span style="color:var(--tinta-suave);font-size:0.9rem">No hay lecturas cargadas para este grado en la planilla.</span>';
     return;
   }
 
-  lecturasCargadas.forEach(lec => {
+  filtradas.forEach(lec => {
     const card = document.createElement('div');
     card.className = 'lib-card' + (lec.id === lecturaSeleccionadaId ? ' selected' : '');
 
@@ -486,3 +515,4 @@ async function enviarResultados(data) {
 /* inicialización */
 cargarLecturasDesdeSheet();
 actualizarPreviewPalabras();
+
