@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<title>Vuela Leyendo · Fluidez lectora 1º grado</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ====================== PANTALLA: MENÚ PRINCIPAL ====================== -->
+<section id="screen-menu" class="screen screen--active">
+  <div class="sky">
+    <svg class="cloud cloud--a" viewBox="0 0 200 100"><ellipse cx="60" cy="60" rx="55" ry="32"/><ellipse cx="110" cy="45" rx="45" ry="38"/><ellipse cx="150" cy="62" rx="40" ry="28"/></svg>
+    <svg class="cloud cloud--b" viewBox="0 0 200 100"><ellipse cx="60" cy="60" rx="55" ry="32"/><ellipse cx="110" cy="45" rx="45" ry="38"/><ellipse cx="150" cy="62" rx="40" ry="28"/></svg>
+  </div>
+
+  <header class="menu-header">
+    <div class="brand">
+      <svg class="brand-bird" viewBox="0 0 64 64" aria-hidden="true">
+        <ellipse cx="30" cy="36" rx="20" ry="16" fill="var(--sol)"/>
+        <path d="M10 34 C2 30, 2 22, 10 20 C14 26, 14 30, 10 34 Z" fill="var(--coral)"/>
+        <circle cx="42" cy="28" r="5.5" fill="var(--tinta)"/>
+        <circle cx="44" cy="26.5" r="1.3" fill="#fff"/>
+        <path d="M50 30 L60 27 L51 34 Z" fill="var(--coral)"/>
+      </svg>
+      <div>
+        <h1>Vuela Leyendo</h1>
+        <p class="tagline">Club de lectura en voz alta · 1º grado</p>
+      </div>
+    </div>
+    <button id="btn-config" class="ghost-btn" type="button">⚙️ Preparar texto y datos</button>
+  </header>
+
+  <div class="activity-grid">
+    <button class="activity-card activity-card--live" id="card-actividad-1" type="button">
+      <span class="card-eyebrow">Actividad lista</span>
+      <span class="card-icon" aria-hidden="true">🎙️</span>
+      <span class="card-title">Lectura en voz alta</span>
+      <span class="card-desc">Grabá tu voz leyendo el cuento y mirá cuántas palabras leés en un minuto.</span>
+      <span class="card-cta">Empezar a leer →</span>
+    </button>
+
+    <div class="activity-card activity-card--soon" aria-disabled="true">
+      <span class="card-eyebrow">Muy pronto</span>
+      <span class="card-icon" aria-hidden="true">🧩</span>
+      <span class="card-title">Sopa de sílabas</span>
+      <span class="card-desc">Armá palabras uniendo sílabas antes de que se acabe el tiempo.</span>
+    </div>
+
+    <div class="activity-card activity-card--soon" aria-disabled="true">
+      <span class="card-eyebrow">Muy pronto</span>
+      <span class="card-icon" aria-hidden="true">🔊</span>
+      <span class="card-title">Eco de palabras</span>
+      <span class="card-desc">Escuchá una palabra y repetila lo más rápido y claro posible.</span>
+    </div>
+  </div>
+</section>
+
+<!-- ====================== PANTALLA: CONFIGURACIÓN (DOCENTE) ====================== -->
+<section id="screen-config" class="screen">
+  <div class="config-panel">
+    <button class="back-link" id="back-from-config" type="button">← Volver al menú</button>
+    <h2>Preparar la lectura</h2>
+    <p class="config-hint">Esto lo completa la maestra o el maestro antes de que el alumno lea.</p>
+
+    <label class="field">
+      <span>Nombre del alumno o alumna</span>
+      <input type="text" id="input-student" placeholder="Ej: Martina Gómez" autocomplete="off">
+    </label>
+
+    <label class="field">
+      <span>Curso / grado</span>
+      <input type="text" id="input-grade" placeholder="Ej: 1º A" autocomplete="off" value="1º grado">
+    </label>
+
+    <!-- Biblioteca de lecturas -->
+    <div class="library-section">
+      <div class="library-header">
+        <span class="field-label">Elegir lectura <span class="lib-source">desde la planilla Google</span></span>
+        <button id="btn-reload-readings" type="button" class="ghost-btn ghost-btn--small">↺ Actualizar</button>
+      </div>
+      <div class="library-list" id="library-list">
+        <!-- se genera con JS -->
+      </div>
+    </div>
+
+
+    <!-- Texto seleccionado (editable) -->
+    <label class="field">
+      <span class="field-label-row">
+        Texto para leer
+        <span class="word-count-preview" id="word-count-preview"></span>
+      </span>
+      <textarea id="input-text" rows="5" placeholder="Seleccioná una lectura arriba, o escribí el texto acá directamente..."></textarea>
+    </label>
+
+    <button class="primary-btn" id="btn-start-reading" type="button">Guardar y empezar lectura →</button>
+  </div>
+</section>
+
+<!-- ====================== PANTALLA: ACTIVIDAD 1 - LECTURA ====================== -->
+<section id="screen-reading" class="screen">
+  <div class="reading-layout">
+
+    <!-- columna izquierda: texto -->
+    <div class="reading-text-panel">
+      <div class="reading-meta">
+        <span id="display-student" class="chip">Alumno/a</span>
+        <span id="display-grade" class="chip chip--muted">1º grado</span>
+      </div>
+      <div class="reading-text" id="reading-text" tabindex="0"></div>
+    </div>
+
+    <!-- columna derecha: controles -->
+    <div class="reading-control-panel">
+      <button class="back-link back-link--light" id="back-from-reading" type="button">← Menú</button>
+
+      <div class="mascot-wrap">
+        <svg class="mascot" id="mascot" viewBox="0 0 120 120" aria-hidden="true">
+          <ellipse cx="60" cy="70" rx="44" ry="38" fill="var(--sol)"/>
+          <path d="M22 50 C5 42, 5 18, 24 16 C32 28, 30 42, 22 50 Z" fill="var(--coral)"/>
+          <path d="M98 50 C115 42, 115 18, 96 16 C88 28, 90 42, 98 50 Z" fill="var(--coral)"/>
+          <circle cx="44" cy="66" r="7" fill="var(--tinta)"/>
+          <circle cx="76" cy="66" r="7" fill="var(--tinta)"/>
+          <circle cx="46.5" cy="63.5" r="2" fill="#fff"/>
+          <circle cx="78.5" cy="63.5" r="2" fill="#fff"/>
+          <path id="mascot-mouth" d="M48 84 Q60 90 72 84" stroke="var(--tinta)" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+        </svg>
+      </div>
+
+      <div class="timer-ring-wrap">
+        <svg class="timer-ring" viewBox="0 0 160 160">
+          <circle class="timer-ring-bg" cx="80" cy="80" r="70"/>
+          <circle class="timer-ring-fg" id="timer-ring-fg" cx="80" cy="80" r="70"/>
+        </svg>
+        <div class="timer-label">
+          <span id="timer-seconds">60</span>
+          <small>segundos</small>
+        </div>
+      </div>
+
+      <div class="live-stats">
+        <div class="stat">
+          <span class="stat-value" id="stat-words">0</span>
+          <span class="stat-label">palabras leídas</span>
+        </div>
+        <div class="stat">
+          <span class="stat-value" id="stat-status">●</span>
+          <span class="stat-label" id="stat-status-label">listo</span>
+        </div>
+      </div>
+
+      <button class="record-btn" id="btn-record" type="button">
+        <span class="record-dot"></span>
+        <span id="record-btn-label">Empezar a leer</span>
+      </button>
+      <button class="ghost-btn ghost-btn--block" id="btn-stop" type="button" hidden>Terminé de leer</button>
+      <p class="reading-hint" id="reading-hint">Apretá el botón cuando estés listo o lista para leer en voz alta.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ====================== PANTALLA: RESULTADOS ====================== -->
+<section id="screen-results" class="screen">
+  <div class="results-panel">
+    <div class="results-banner" id="results-banner">
+      <svg class="confetti-icon" viewBox="0 0 64 64" aria-hidden="true">
+        <circle cx="14" cy="16" r="4" fill="var(--sol)"/>
+        <circle cx="50" cy="12" r="3" fill="var(--coral)"/>
+        <circle cx="56" cy="34" r="4" fill="var(--hierba)"/>
+        <circle cx="10" cy="44" r="3" fill="var(--coral)"/>
+        <circle cx="32" cy="6" r="3" fill="var(--hierba)"/>
+        <path d="M32 50 L36 38 L46 38 L38 31 L41 20 L32 27 L23 20 L26 31 L18 38 L28 38 Z" fill="var(--sol)"/>
+      </svg>
+      <h2>¡Muy bien, <span id="results-name">alumno/a</span>!</h2>
+      <p>Así te fue en esta lectura</p>
+    </div>
+
+    <div class="results-grid">
+      <div class="result-card">
+        <span class="result-number" id="result-wpm">0</span>
+        <span class="result-label">palabras por minuto</span>
+      </div>
+      <div class="result-card">
+        <span class="result-number" id="result-correct">0</span>
+        <span class="result-label">palabras correctas</span>
+      </div>
+      <div class="result-card">
+        <span class="result-number" id="result-total">0</span>
+        <span class="result-label">palabras del texto</span>
+      </div>
+      <div class="result-card">
+        <span class="result-number" id="result-accuracy">0%</span>
+        <span class="result-label">precisión lectora</span>
+      </div>
+    </div>
+
+    <div class="audio-review">
+      <h3>Escuchar la grabación</h3>
+      <audio id="audio-player" controls></audio>
+    </div>
+
+    <div class="results-text-review">
+      <h3>Texto leído (en verde lo reconocido)</h3>
+      <div class="reading-text reading-text--small" id="review-text"></div>
+    </div>
+
+    <p class="sync-status" id="sync-status"></p>
+
+    <div class="results-actions">
+      <button class="ghost-btn" id="btn-read-again" type="button">🔁 Leer de nuevo</button>
+      <button class="primary-btn" id="btn-finish" type="button">Volver al menú</button>
+    </div>
+  </div>
+</section>
+
+<script src="app.js"></script>
+</body>
+</html>
