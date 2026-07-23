@@ -314,3 +314,93 @@ audio{ width:100%; }
   border:2px solid #D7E6F0;
 }
 .library-form h3{ margin:0 0 12px; font-size:1.1rem; }
+
+.lib-source{
+  font-size:0.78rem; font-weight:600; color:var(--tinta-suave);
+  background:#E8F4EC; color:var(--hierba); padding:3px 8px;
+  border-radius:999px; margin-left:6px;
+}
+
+/* ============ TARJETAS DE GRADO ============ */
+.grade-grid{
+  position:relative;
+  display:grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 18px;
+  padding: 0 24px;
+  margin-top: 10px;
+}
+
+.grade-card{
+  background: #fff;
+  border-radius: var(--radio);
+  padding: 28px 12px 22px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  box-shadow: var(--sombra);
+  border: 4px solid transparent;
+  cursor: pointer;
+  transition: transform .18s ease, border-color .18s ease, background .18s ease;
+}
+.grade-card:hover{
+  transform: translateY(-8px);
+}
+
+/* color distinto por grado */
+.grade-card[data-grade="1"]{ border-color: #FF6B5E; }
+.grade-card[data-grade="1"]:hover{ background: #FFF0EF; }
+.grade-card[data-grade="2"]{ border-color: #FF9A3C; }
+.grade-card[data-grade="2"]:hover{ background: #FFF5EB; }
+.grade-card[data-grade="3"]{ border-color: #FFC93C; }
+.grade-card[data-grade="3"]:hover{ background: #FFFBEE; }
+.grade-card[data-grade="4"]{ border-color: #4CAF7D; }
+.grade-card[data-grade="4"]:hover{ background: #EEF8F3; }
+.grade-card[data-grade="5"]{ border-color: #2ABBA7; }
+.grade-card[data-grade="5"]:hover{ background: #EDFAF8; }
+.grade-card[data-grade="6"]{ border-color: #2B7FB0; }
+.grade-card[data-grade="6"]:hover{ background: #EAF3FB; }
+.grade-card[data-grade="7"]{ border-color: #7C5CBF; }
+.grade-card[data-grade="7"]:hover{ background: #F4F0FB; }
+
+.grade-number{
+  font-family: 'Baloo 2', sans-serif;
+  font-size: 2.8rem;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--tinta);
+}
+.grade-label{
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--tinta-suave);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* colores del número por grado */
+.grade-card[data-grade="1"] .grade-number{ color: #FF6B5E; }
+.grade-card[data-grade="2"] .grade-number{ color: #FF9A3C; }
+.grade-card[data-grade="3"] .grade-number{ color: #C49A00; }
+.grade-card[data-grade="4"] .grade-number{ color: #4CAF7D; }
+.grade-card[data-grade="5"] .grade-number{ color: #2ABBA7; }
+.grade-card[data-grade="6"] .grade-number{ color: #2B7FB0; }
+.grade-card[data-grade="7"] .grade-number{ color: #7C5CBF; }
+
+/* badge de grado en la config */
+.config-title-row{
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 4px;
+}
+.grade-badge{
+  font-family: 'Baloo 2', sans-serif;
+  font-size: 1rem;
+  font-weight: 800;
+  padding: 5px 16px;
+  border-radius: 999px;
+  background: var(--tinta);
+  color: #fff;
+}
