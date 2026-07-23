@@ -105,7 +105,7 @@ function abrirConfigParaGrado(grado) {
 }
 
 /* ---------- pantalla configuración ---------- */
-const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwgvO-E20Zdo11eeN8GrVCCj-Sf8UwGjwOybWJ17H0BUglJoO3Bf8kU8nkVCCEE6XNSgg/exec';
+const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxvq95RdeFlheqXPFXZZWzklZEuoXh4xcTjbh40lPyH5F39uy2PBIFUSvJwkzvOQaXxnQ/exec';
 
 const LECTURAS_DEFAULT = [
   { id: 'default-1', grado: 1, titulo: 'La gallina', texto: 'Las gallinas son aves. Las aves ponen huevos. Las crías se llaman pollitos. Sus cuerpos están cubiertos de plumas. Tienen pico, alas y dos patas. Las gallinas se alimentan de gusanos, insectos y semillas. Viven en un gallinero y tienen alas pero no vuelan.' },
@@ -502,9 +502,15 @@ async function enviarResultados(data) {
 
     const result = await response.json().catch(() => ({ ok: response.ok }));
     if (result && result.ok) {
-      syncStatus.textContent = '✅ Guardado en la planilla y el audio subido a Drive.';
+      const audioMsg = result.audioUrl ? ' · Audio subido a Drive.' : ' · Audio no disponible.';
+      syncStatus.textContent = '✅ Fila guardada en la planilla.' + audioMsg;
     } else {
-      syncStatus.textContent = '⚠️ Se envió, pero hubo un problema al guardar. Revisá el Apps Script.';
+      let msg = '⚠️ ';
+      if (result.errorSheet) msg += 'Error en planilla: ' + result.errorSheet;
+      else if (result.errorAudio) msg += 'Error en audio: ' + result.errorAudio;
+      else if (result.error) msg += result.error;
+      else msg += 'Error desconocido. Revisá Apps Script → Ejecuciones.';
+      syncStatus.textContent = msg;
     }
   } catch (err) {
     console.error(err);
@@ -515,4 +521,5 @@ async function enviarResultados(data) {
 /* inicialización */
 cargarLecturasDesdeSheet();
 actualizarPreviewPalabras();
+
 
