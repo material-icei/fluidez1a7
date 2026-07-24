@@ -105,7 +105,7 @@ function abrirConfigParaGrado(grado) {
 }
 
 /* ---------- pantalla configuración ---------- */
-const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwmli9kJrtYdS8Zdg2ynEvX1NUrlT6SIpEftXcMpei7BRGrQXFF4Wf9C4osxydvBUDEHQ/exec';
+const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzXxzgXY_zfnNK24aDlcVX43AlXz_dkn3NpiXLyyPLrEP1B0pSR5AbPC0i8aVTIR9-i6w/exec';
 
 const LECTURAS_DEFAULT = [
   { id: 'default-1', grado: 1, titulo: 'La gallina', texto: 'Las gallinas son aves. Las aves ponen huevos. Las crías se llaman pollitos. Sus cuerpos están cubiertos de plumas. Tienen pico, alas y dos patas. Las gallinas se alimentan de gusanos, insectos y semillas. Viven en un gallinero y tienen alas pero no vuelan.' },
