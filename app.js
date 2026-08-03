@@ -280,16 +280,40 @@ function crearReconocedor() {
       refrescarReconocimientoEnVivo();
     }
   };
+  rec.onstart = () => {
+    huboErrorFatal = false;
+  };
   rec.onerror = (e) => {
     console.warn('Error de reconocimiento de voz:', e.error);
+    manejarErrorReconocimiento(e.error);
   };
   rec.onend = () => {
-    if (state.recognizing && !state.finished) {
+    if (state.recognizing && !state.finished && !huboErrorFatal) {
       // el navegador a veces corta el reconocimiento solo; lo reiniciamos si seguimos grabando
       try { rec.start(); } catch (_) {}
     }
   };
   return rec;
+}
+
+/* Errores fatales: no tiene sentido seguir reintentando en loop */
+const ERRORES_FATALES = new Set(['not-allowed', 'service-not-allowed', 'language-not-supported']);
+let huboErrorFatal = false;
+
+function manejarErrorReconocimiento(codigo) {
+  const mensajes = {
+    'not-allowed': '⚠️ El navegador o el Chromebook bloqueó el reconocimiento de voz (permiso denegado). El audio se sigue grabando igual, pero no va a contar ni resaltar palabras.',
+    'service-not-allowed': '⚠️ Este Chromebook tiene deshabilitado el servicio de reconocimiento de voz (posible política del colegio). El audio se sigue grabando igual.',
+    'network': '⚠️ No hay conexión con el servicio de reconocimiento de voz de Google (puede ser el filtro de internet del colegio). El audio se sigue grabando igual, pero no va a contar ni resaltar palabras.',
+    'language-not-supported': '⚠️ El idioma es-AR no está disponible en este navegador.',
+    'audio-capture': '⚠️ No se pudo capturar audio del micrófono para el reconocimiento de voz.',
+  };
+  // 'no-speech' y 'aborted' son normales (silencios, reinicios) y no se muestran
+  const msg = mensajes[codigo];
+  if (msg) {
+    if (ERRORES_FATALES.has(codigo)) huboErrorFatal = true;
+    readingHint.textContent = msg;
+  }
 }
 
 function refrescarReconocimientoEnVivo() {
@@ -521,5 +545,4 @@ async function enviarResultados(data) {
 /* inicialización */
 cargarLecturasDesdeSheet();
 actualizarPreviewPalabras();
-
 
